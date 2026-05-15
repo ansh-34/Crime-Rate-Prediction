@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crime Rate Prediction</title>
+    <title>Crime Analytics Dashboard</title>
     <link rel="icon" href="static/images/favicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,44 +18,187 @@
 
     <header class="hero-header compact">
         <div class="hero-content">
-            <p class="eyebrow">Prediction Summary</p>
-            <h1 class="title">Crime Rate Predictor</h1>
-            <h2 class="tagline">Result generated for your selected inputs</h2>
+            <p class="eyebrow">Analytics Dashboard</p>
+            <h1 class="title">{{ city_name }} Crime Forecast</h1>
+            <h2 class="tagline">{{ crime_type }} prediction for {{ year }}</h2>
         </div>
     </header>
 
     <main class="container result-layout">
         <section class="glass-card selection-card">
-            <h3 class="card-title">Selected Inputs</h3>
+            <div class="section-head">
+                <div>
+                    <h3 class="card-title">Selected Scenario</h3>
+                    <p class="card-subtitle compact-copy">Forecast based on NCRB-style historical data from 2014-2021.</p>
+                </div>
+                <div class="actions">
+                    <a href="{{ url_for('download_prediction', city=city_code, crime=crime_code, year=year) }}" class="btn secondary">Download CSV</a>
+                    <a href="/" class="btn btn-link">New Prediction</a>
+                </div>
+            </div>
             <div class="chips">
-                <span class="chip">City: {{city_name}}</span>
-                <span class="chip">Crime Type: {{crime_type}}</span>
-                <span class="chip">Year: {{year}}</span>
+                <span class="chip">City: {{ city_name }}</span>
+                <span class="chip">Crime Type: {{ crime_type }}</span>
+                <span class="chip">Year: {{ year }}</span>
+                <span class="chip">Rank: {{ selected_rank }} of {{ total_cities }}</span>
             </div>
         </section>
 
-        <section class="glass-card metrics-card">
-            <h3 class="card-title">Prediction Output</h3>
-            <div class="metrics-grid">
-                <article class="metric-box highlight">
-                    <p class="metric-label">Risk Category</p>
-                    <p class="metric-value">{{crime_status}}</p>
-                </article>
-                <article class="metric-box">
-                    <p class="metric-label">Estimated Crime Rate</p>
-                    <p class="metric-value">{{crime_rate}}</p>
-                </article>
-                <article class="metric-box">
-                    <p class="metric-label">Estimated Cases</p>
-                    <p class="metric-value">{{cases}}</p>
-                </article>
-                <article class="metric-box">
-                    <p class="metric-label">Population (in Lakhs)</p>
-                    <p class="metric-value">{{population}}</p>
-                </article>
-            </div>
+        <section class="metrics-grid dashboard-metrics">
+            <article class="metric-box highlight">
+                <p class="metric-label">Risk Category</p>
+                <p class="metric-value">{{ crime_status }}</p>
+            </article>
+            <article class="metric-box">
+                <p class="metric-label">Estimated Crime Rate</p>
+                <p class="metric-value">{{ crime_rate }}</p>
+            </article>
+            <article class="metric-box">
+                <p class="metric-label">Estimated Cases</p>
+                <p class="metric-value">{{ cases }}</p>
+            </article>
+            <article class="metric-box">
+                <p class="metric-label">Population in Lakhs</p>
+                <p class="metric-value">{{ population }}</p>
+            </article>
+        </section>
 
-            <a href="/" class="btn btn-link">Check Another Prediction</a>
+        <section class="dashboard-grid">
+            <article class="glass-card analytics-card wide-card">
+                <div class="section-head">
+                    <div>
+                        <h3 class="card-title">Historical Trend + Forecast</h3>
+                        <p class="card-subtitle compact-copy">Actual records are plotted with the selected forecast year.</p>
+                    </div>
+                    <span class="status-pill">{{ trend_label }} trend</span>
+                </div>
+                <canvas id="trendChart" height="280"></canvas>
+            </article>
+
+            <article class="glass-card analytics-card">
+                <h3 class="card-title">Risk Interpretation</h3>
+                <div class="insight-stack">
+                    <p>
+                        {{ city_name }} is ranked <strong>{{ selected_rank }}</strong> out of {{ total_cities }} cities
+                        for {{ crime_type }} in {{ year }}.
+                    </p>
+                    <p>
+                        The forecast is <strong>{{ average_delta }}</strong> points compared with the city's historical
+                        average of {{ city_average }}.
+                    </p>
+                    <p>
+                        From 2014 to 2021, the historical rate moved by <strong>{{ trend_delta }}</strong> points,
+                        indicating a {{ trend_label | lower }} pattern.
+                    </p>
+                </div>
+            </article>
+        </section>
+
+        <section class="glass-card analytics-card helpline-card">
+            <div class="section-head">
+                <div>
+                    <h3 class="card-title">{{ helpline.title }}</h3>
+                    <p class="card-subtitle compact-copy">{{ helpline.summary }}</p>
+                </div>
+                <span class="status-pill">For urgent danger, call 112</span>
+            </div>
+            <div class="helpline-grid">
+                {% for contact in helpline.contacts %}
+                <article class="helpline-item">
+                    <div>
+                        <span>{{ contact.label }}</span>
+                        <strong>{{ contact.number }}</strong>
+                    </div>
+                    <p>{{ contact.note }}</p>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="glass-card analytics-card">
+                <h3 class="card-title">City Comparison</h3>
+                <p class="card-subtitle compact-copy">Predicted crime rate across all metropolitan cities.</p>
+                <canvas id="cityChart" height="320"></canvas>
+            </article>
+
+            <article class="glass-card analytics-card">
+                <h3 class="card-title">Model Evaluation</h3>
+                <p class="card-subtitle compact-copy">Saved Random Forest model evaluated on {{ model_metrics.records }} historical rows.</p>
+                <div class="mini-metrics">
+                    <div>
+                        <span>R2 Score</span>
+                        <strong>{{ model_metrics.r2 }}</strong>
+                    </div>
+                    <div>
+                        <span>MAE</span>
+                        <strong>{{ model_metrics.mae }}</strong>
+                    </div>
+                    <div>
+                        <span>RMSE</span>
+                        <strong>{{ model_metrics.rmse }}</strong>
+                    </div>
+                </div>
+                <canvas id="fitChart" height="230"></canvas>
+            </article>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="glass-card analytics-card">
+                <h3 class="card-title">Top Risk Cities</h3>
+                <div class="rank-list">
+                    {% for item in riskiest_cities %}
+                    <div class="rank-row">
+                        <span>{{ loop.index }}. {{ item.city }}</span>
+                        <strong>{{ item.rate }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="glass-card analytics-card">
+                <h3 class="card-title">Safest Cities</h3>
+                <div class="rank-list">
+                    {% for item in safest_cities %}
+                    <div class="rank-row">
+                        <span>{{ loop.index }}. {{ item.city }}</span>
+                        <strong>{{ item.rate }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
+        </section>
+
+        <section class="glass-card analytics-card">
+            <div class="section-head">
+                <div>
+                    <h3 class="card-title">Crime Risk Table for {{ city_name }}</h3>
+                    <p class="card-subtitle compact-copy">Predicted  {{ year }} rate for every supported crime category.</p>
+                </div>
+                <code class="api-chip">GET /api/predict?city={{ city_code }}&amp;crime={{ crime_code }}&amp;year={{ year }}</code>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Crime Type</th>
+                            <th>Rate</th>
+                            <th>Cases</th>
+                            <th>Risk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in crime_table %}
+                        <tr>
+                            <td>{{ row.crime }}</td>
+                            <td>{{ row.rate }}</td>
+                            <td>{{ row.cases }}</td>
+                            <td>{{ row.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 
@@ -66,15 +209,24 @@
             </div>
             <div class="social-link">
                 <a href="https://www.linkedin.com/in/ansh-gupta-iiitr" target="_blank">
-                    <img src="static/images/linkedin.png" alt="LinkedIn" width="35">                
-                </a>  
+                    <img src="static/images/linkedin.png" alt="LinkedIn" width="35">
+                </a>
             </div>
             <div class="social-link">
                 <a href="https://github.com/ansh-34" target="_blank">
                     <img src="static/images/github.png" alt="GitHub" width="35">
                 </a>
             </div>
-        </div>       
-    </footer>    
+        </div>
+    </footer>
+
+    <script>
+        window.dashboardData = {
+            history: {{ history | tojson }},
+            comparison: {{ comparison | tojson }},
+            actualVsPredicted: {{ actual_vs_predicted | tojson }}
+        };
+    </script>
+    <script src="static/main.js"></script>
 </body>
 </html>

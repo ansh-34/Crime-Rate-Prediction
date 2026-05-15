@@ -27,7 +27,7 @@
     <main class="layout container">
         <section class="glass-card form-card">
             <h3 class="card-title">Generate Prediction</h3>
-            <p class="card-subtitle">Select parameters and estimate expected risk level.</p>
+            <p class="card-subtitle">Select parameters and open a dashboard with forecast, ranking, and model insights.</p>
 
             <form action="/predict" method="POST" class="predict-form">
                 <div class="field-group">
@@ -73,7 +73,11 @@
 
                 <div class="field-group">
                     <label for="year-dropdown">Year</label>
-                    <select id="year-dropdown" name="year"></select>
+                    <select id="year-dropdown" name="year">
+                        {% for year in forecast_years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <button type="submit" class="btn" id="predict_button">Predict Crime Rate</button>
@@ -81,15 +85,22 @@
         </section>
 
         <section class="glass-card about-card">
-            <h3 class="card-title">About This Project</h3>
+            <h3 class="card-title">Analytics Upgrade</h3>
             <p>
-                This application forecasts city-wise crime trends using a machine learning model trained on NCRB-based
-                historical data. It helps in understanding possible risk patterns by city, crime type, and year.
+                The app now combines prediction with historical trend analysis, city-wise comparison, risk ranking,
+                and saved-model evaluation metrics.
             </p>
             <p>
-                It covers 19 Indian metropolitan cities and 10 crime categories. The model uses Random Forest Regression
-                and estimates both crime rate and number of cases for selected inputs.
+                Forecast years are limited to 2022-2030 because the training data covers 2014-2021. This keeps the
+                prediction range more realistic for a student ML project.
             </p>
+            <div class="feature-list">
+                <span>Trend chart</span>
+                <span>City ranking</span>
+                <span>Risk table</span>
+                <span>CSV report</span>
+                <span>API endpoint</span>
+            </div>
             <a class="report-link" href="{{ url_for('project_report') }}" target="_blank">View Detailed Project Report</a>
         </section>
     </main>
@@ -111,7 +122,6 @@
             </div>
         </div>       
     </footer>
-
     <script src="static/main.js"></script>    
 </body>
 </html>
