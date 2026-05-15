@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Rate Prediction</title>
+    <link rel="icon" href="static/images/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+
+<body>
+    <div class="bg-overlay"></div>
+
+    <header class="hero-header">
+        <div class="hero-content">
+            <p class="eyebrow">AI Driven Forecasting</p>
+            <h1 class="title">Crime Rate Predictor</h1>
+            <h2 class="tagline">Explore future trends across cities and crime categories</h2>
+        </div>
+    </header>
+
+    <main class="layout container">
+        <section class="glass-card form-card">
+            <h3 class="card-title">Generate Prediction</h3>
+            <p class="card-subtitle">Select parameters and estimate expected risk level.</p>
+
+            <form action="/predict" method="POST" class="predict-form">
+                <div class="field-group">
+                    <label for="city">City Name</label>
+                    <select id="city" name="city">
+                        <option value="0">Ahmedabad</option>
+                        <option value="1">Bengaluru</option>
+                        <option value="2">Chennai</option>
+                        <option value="3">Coimbatore</option>
+                        <option value="4">Delhi</option>
+                        <option value="5">Ghaziabad</option>
+                        <option value="6">Hyderabad</option>
+                        <option value="7">Indore</option>
+                        <option value="8">Jaipur</option>
+                        <option value="9">Kanpur</option>
+                        <option value="10">Kochi</option>
+                        <option value="11">Kolkata</option>
+                        <option value="12">Kozhikode</option>
+                        <option value="13">Lucknow</option>
+                        <option value="14">Mumbai</option>
+                        <option value="15">Nagpur</option>
+                        <option value="16">Patna</option>
+                        <option value="17">Pune</option>
+                        <option value="18">Surat</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label for="crime">Crime Type</label>
+                    <select id="crime" name="crime">
+                        <option value="9">Murder</option>
+                        <option value="8">Kidnapping</option>
+                        <option value="7">Economic Offences</option>
+                        <option value="6">Cyber Crimes</option>
+                        <option value="5">Crime against women</option>
+                        <option value="4">Crime against children</option>
+                        <option value="3">Crime against Senior Citizen</option>
+                        <option value="2">Crime against ST</option>
+                        <option value="1">Crime against SC</option>
+                        <option value="0">Crime Committed by Juveniles</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label for="year-dropdown">Year</label>
+                    <select id="year-dropdown" name="year"></select>
+                </div>
+
+                <button type="submit" class="btn" id="predict_button">Predict Crime Rate</button>
+            </form>
+        </section>
+
+        <section class="glass-card about-card">
+            <h3 class="card-title">About This Project</h3>
+            <p>
+                This application forecasts city-wise crime trends using a machine learning model trained on NCRB-based
+                historical data. It helps in understanding possible risk patterns by city, crime type, and year.
+            </p>
+            <p>
+                It covers 19 Indian metropolitan cities and 10 crime categories. The model uses Random Forest Regression
+                and estimates both crime rate and number of cases for selected inputs.
+            </p>
+            <a class="report-link" href="{{ url_for('project_report') }}" target="_blank">View Detailed Project Report</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer">
+            <div class="developer">
+                <h3>Developed by Ansh Gupta (Semester 6)</h3>
+            </div>
+            <div class="social-link">
+                <a href="https://www.linkedin.com/in/ansh-gupta-iiitr" target="_blank">
+                    <img src="static/images/linkedin.png" alt="LinkedIn" width="35">                
+                </a>  
+            </div>
+            <div class="social-link">
+                <a href="https://github.com/ansh-34" target="_blank">
+                    <img src="static/images/github.png" alt="GitHub" width="35">
+                </a>
+            </div>
+        </div>       
+    </footer>
+
+    <script src="static/main.js"></script>    
+</body>
+</html>
