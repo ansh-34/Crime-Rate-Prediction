@@ -1,69 +1,187 @@
-# Crime Rate Predictor - Unlock Safety: Reduce Crime Rate Together
-Crime Rate Predictor is an application that uses machine learning techniques to predict crime rates in 19 Indian metropolitan cities. The goal of this project is to assist law enforcement agencies in understanding crime patterns and allocating resources effectively to reduce crime rates and improve public safety.
+# Crime Rate Prediction
 
-## About the Application
+A Flask-based machine learning web application that predicts crime rates for major Indian metropolitan cities. The app uses historical NCRB-style crime data, a trained Random Forest regression model, and an interactive dashboard to show forecasts, trends, rankings, estimated cases, risk categories, and safety helplines.
 
-Crime rate prediction has become an important tool for law enforcement agencies to help them better understand patterns of crime and anticipate where crime is likely to occur. By predicting future crime trends, law enforcement agencies can better allocate resources to areas that are likely to experience increases in criminal activity. This could lead to a decrease in crime overall, as well as an increase in public safety. Additionally, crime rate prediction can help police departments develop better strategies for responding to crime as it happens.
+## Overview
 
-The dataset is prepared manually based on the publication available on the Indian National Crime Rate Bureau (NCRB) official website. This data provides statistics on crimes committed in 19 metropolitan cities during the year 2014 to 2021. With the help of this application, we can predict the crime rates for 10 different categories of crime that are likely to occur in 19 Indian metropolitan cities over the next few years. It includes statistics on 10 different categories of crime, including murder, kidnapping, crime against women, crime against children, crime committed by juveniles, crime against senior citizens, crime against SC, crime against ST, economic offences, and cybercrimes.
+This project forecasts crime rates for 19 Indian cities across 10 crime categories. Users can select a city, crime type, and forecast year, then view a detailed analytics dashboard with:
 
-The system uses scikit-learn's Random Forest Regression model, which takes year, city name, and crime type data as inputs. Random Forest Regression is a type of an ensemble learning techniques that can be used to predict continuous values from a collection of data. It works by creating a large number of "decision trees" which each make a prediction about the target variable. Then it averages all the predictions to come up with a final prediction. This makes it more accurate than a single decision tree. The model predicts the crime rate with an accuracy of 93.20% on the testing dataset.
+- Predicted crime rate and estimated case count
+- Risk category classification
+- Historical trend plus forecast point
+- City-wise comparison and ranking
+- Safest and highest-risk city lists
+- Model evaluation metrics
+- Category-specific emergency and support helplines
+- CSV export for the selected prediction
 
-## Features
+The training data covers 2014 to 2021, and the web app supports forecast years from 2022 to 2030.
 
-- Crime rate prediction for 10 different categories of crime
-- Prediction for 19 Indian metropolitan cities
-- Historical crime data from 2014 to 2021
-- Random Forest Regression model for accurate predictions
-- Model accuracy of 93.20% on testing dataset
+## Supported Cities
 
-## Installation
+Ahmedabad, Bengaluru, Chennai, Coimbatore, Delhi, Ghaziabad, Hyderabad, Indore, Jaipur, Kanpur, Kochi, Kolkata, Kozhikode, Lucknow, Mumbai, Nagpur, Patna, Pune, and Surat.
+
+## Supported Crime Categories
+
+- Crime Committed by Juveniles
+- Crime against SC
+- Crime against ST
+- Crime against Senior Citizen
+- Crime against children
+- Crime against women
+- Cyber Crimes
+- Economic Offences
+- Kidnapping
+- Murder
+
+## Tech Stack
+
+- Python
+- Flask
+- Pandas
+- NumPy
+- scikit-learn
+- OpenPyXL
+- HTML, CSS, and JavaScript
+- Pickle for saved model loading
+
+## Project Structure
+
+```text
+Crime-Rate-Prediction-main/
+|-- app.py                         # Flask application and prediction logic
+|-- crp.ipynb                      # Notebook used for model/data work
+|-- requirements.txt               # Python dependencies
+|-- Dataset/
+|   |-- crp.xlsx
+|   |-- new_dataset.xlsx
+|   `-- new_dataset_copy.xlsx
+|-- Mappings/
+|   |-- City_Mapping.txt
+|   `-- Type_Mapping.txt
+|-- Model/
+|   `-- model.pkl                  # Trained Random Forest model
+|-- Report/
+|   |-- Ansh_Gupta_MiniProject.docx
+|   |-- Ansh_Gupta_Mini_Project_Presentation.pptx
+|   `-- literature survey.xlsx
+|-- static/
+|   |-- main.js
+|   |-- styles.css
+|   `-- images/
+`-- templates/
+    |-- index.html
+    `-- result.html
+```
+
+## Setup
 
 1. Clone the repository:
 
-   ```shell
-   git clone <your-repository-url>
+```bash
+git clone <repository-url>
+cd Crime-Rate-Prediction-main
+```
 
-2. Navigate to the project directory:
+2. Create and activate a virtual environment:
 
-   ```shell
-   cd Crime-Rate-Prediction
+```bash
+python -m venv myenv
+```
 
-3. Install the required dependencies:
+On Windows:
 
-   ```shell
-   pip install -r requirements.txt
-   
-4. Run the application:
+```bash
+myenv\Scripts\activate
+```
 
-   ```shell
-   python app.py
+On macOS/Linux:
 
+```bash
+source myenv/bin/activate
+```
+
+3. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Run the App
+
+```bash
+python app.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5000
+```
 
 ## Usage
 
-- Launch the application by running `app.py`.
-- Select the desired city, crime type, and year for which you want to predict the crime rate.
-- Click on the "Predict" button to generate the crime rate prediction.
-- The predicted crime rate will be displayed on the screen.
+1. Choose a city.
+2. Choose a crime category.
+3. Choose a forecast year between 2022 and 2030.
+4. Click `Predict Crime Rate`.
+5. Review the analytics dashboard.
+6. Use `Download CSV` to export the selected prediction.
 
-## Contributing
+## API Endpoint
 
-Contributions are welcome! If you want to contribute to this project, please follow these steps:
+The app also exposes a JSON prediction endpoint:
 
-- Fork the repository.
-- Create a new branch for your feature or bug fix.
-- Make the necessary changes and commit them.
-- Submit a pull request, clearly explaining the changes you made.
+```text
+GET /api/predict?city=<city_code>&crime=<crime_code>&year=<year>
+```
 
-Please ensure that your contributions adhere to the project's coding conventions and are accompanied by appropriate tests.
+Example:
 
-## Contact
+```text
+http://127.0.0.1:5000/api/predict?city=4&crime=9&year=2025
+```
 
-If you have any questions, suggestions, or issues regarding this project, please connect with Ansh Gupta on [LinkedIn](https://www.linkedin.com/in/ansh-gupta-iiitr).
+This returns the prediction payload for Delhi, Murder, and year 2025.
+
+## Other Routes
+
+```text
+/                       Home page
+/predict                Form submission route
+/api/predict            JSON prediction API
+/download-prediction    CSV download route
+/report                 Opens the detailed project report
+```
+
+## Model Details
+
+The saved model is loaded from `Model/model.pkl`. It predicts crime rate using:
+
+- Year
+- City code
+- Estimated population
+- Crime type code
+
+The app estimates population from the stored 2011 population values and uses the prediction result to calculate estimated cases and risk category.
+
+## Dataset
+
+The dataset is stored in the `Dataset/` folder and contains historical crime records for supported cities and crime categories. The main runtime dataset used by the Flask app is:
+
+```text
+Dataset/new_dataset.xlsx
+```
+
+## Notes
+
+- Keep `Model/model.pkl` and `Dataset/new_dataset.xlsx` in their current paths because `app.py` loads them directly.
+- The project report can be opened from the app through the `View Detailed Project Report` link.
+- Forecasts are intended for educational and analytical use, not as a substitute for official crime statistics or emergency decision-making.
 
 ## Author
 
-- Name: Ansh Gupta
-- Semester: 6th
-- LinkedIn: https://www.linkedin.com/in/ansh-gupta-iiitr
+Developed by Ansh Gupta.
+
+- LinkedIn: <https://www.linkedin.com/in/ansh-gupta-iiitr>
+- GitHub: <https://github.com/ansh-34>
