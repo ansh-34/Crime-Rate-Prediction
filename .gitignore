@@ -30,6 +30,9 @@ htmlcov/
 *.out
 *.err
 
+# Reports
+Report/
+
 # IDE/editor settings
 .vscode/
 .idea/
